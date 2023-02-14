@@ -1,0 +1,28 @@
+{
+  "name": "svg-crop-overlay",
+  "version": "1.0.0",
+  "description": "Create a transparent svg to represent a crop.",
+  "main": "svg-crop-overlay.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cp ./src/svg-crop-overlay.js ./test && browser-sync start --server 'test' --files 'test'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aslamhus/svg-crop-overlay.git"
+  },
+  "keywords": [
+    "svg",
+    "crop",
+    "overlay"
+  ],
+  "author": "Aslam Husain <aslam.percy.husain@gmail.com> (https://github.com/aslamhus)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aslamhus/svg-crop-overlay/issues"
+  },
+  "homepage": "https://github.com/aslamhus/svg-crop-overlay#readme"
+}
