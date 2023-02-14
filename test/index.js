@@ -1,4 +1,4 @@
-import { createCropSVG } from './svg-crop-overlay.js';
+import { createCropSVG } from '../src/svg-crop-overlay';
 
 const container = document.querySelector('div');
 const crop = { width: 2, height: 3 };

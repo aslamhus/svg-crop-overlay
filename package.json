@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cp ./src/svg-crop-overlay.js ./test && browser-sync start --server 'test' --files 'test'"
+    "start": "webpack serve --config './src/build/webpack.dev.js'",
+    "build": "webpack --config './src/build/webpack.prod.js'",
+    "oldstart": "cp ./src/svg-crop-overlay.js ./test && browser-sync start --server 'test' --files 'test'"
   },
   "repository": {
     "type": "git",
@@ -24,5 +26,15 @@
   "bugs": {
     "url": "https://github.com/aslamhus/svg-crop-overlay/issues"
   },
-  "homepage": "https://github.com/aslamhus/svg-crop-overlay#readme"
+  "homepage": "https://github.com/aslamhus/svg-crop-overlay#readme",
+  "dependencies": {
+    "html-webpack-plugin": "^5.5.0",
+    "webpack": "^5.75.0",
+    "webpack-dev-server": "^4.11.1",
+    "webpack-merge": "^5.8.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^5.0.1"
+  },
+  "type": "module"
 }

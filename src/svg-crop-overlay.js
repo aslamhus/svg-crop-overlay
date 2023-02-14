@@ -9,7 +9,7 @@
  * @property {Number} svgDimensions.height
  * @returns
  */
-export function createCropSVG(
+export default function createCropSVG(
   cropDimensions = { width: 3, height: 2 },
   svgDimensions = { width: 640, height: 480 }
 ) {
