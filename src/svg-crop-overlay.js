@@ -1,5 +1,5 @@
 /**
- *
+ * Create Crop Svg
  * @param {Object} cropDimensions - width and height values for the desired crop, i.e. 16 x 9
  * @property {Number} cropDimensions.width
  * @property {Number} cropDimensions.height
@@ -9,7 +9,7 @@
  * @property {Number} viewBox.height
  * @returns
  */
-export default function createCropSVG(
+export function createCropSVG(
   cropDimensions = { width: 3, height: 2 },
   viewBox = { width: 640, height: 480 }
 ) {
