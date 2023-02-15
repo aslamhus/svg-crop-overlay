@@ -3,28 +3,29 @@
  * @param {Object} cropDimensions - width and height values for the desired crop, i.e. 16 x 9
  * @property {Number} cropDimensions.width
  * @property {Number} cropDimensions.height
- * @param {Object} svgDimensions - literal width and height values of the svg. These values determine the svg
+ * @param {Object} viewBox - literal width and height values of the svg. These values determine the svg
  * viewbox.
- * @property {Number} svgDimensions.width
- * @property {Number} svgDimensions.height
+ * @property {Number} viewBox.width
+ * @property {Number} viewBox.height
  * @returns
  */
 export default function createCropSVG(
   cropDimensions = { width: 3, height: 2 },
-  svgDimensions = { width: 640, height: 480 }
+  viewBox = { width: 640, height: 480 }
 ) {
-  let preserveAspectRatio = 'xMinYMid slice';
+  console.log('viewBox', viewBox);
+  const aspectPreserve = { landscape: 'xMinYMid slice', portrait: 'xMidYMid slice' };
+  let preserveAspectRatio = aspectPreserve.landscape;
   if (cropDimensions.height > cropDimensions.width) {
-    console.log('crop height > crop width');
-    preserveAspectRatio = 'xMidYMax slice';
+    console.log('crop is portrait');
+    preserveAspectRatio = aspectPreserve.portrait;
   }
   console.log('preserveAspectRatio', preserveAspectRatio);
   const svgns = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(svgns, 'svg');
-  // svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
   svg.setAttribute('width', '100%');
   svg.setAttribute('height', '100%');
-  svg.setAttribute('viewBox', `0 0 ${svgDimensions.width} ${svgDimensions.height}`);
+  svg.setAttribute('viewBox', `0 0 ${viewBox.width} ${viewBox.height}`);
   svg.setAttribute('preserveAspectRatio', preserveAspectRatio);
   const defs = document.createElementNS(svgns, 'defs');
   const style = document.createElementNS(svgns, 'style');
@@ -36,7 +37,7 @@ export default function createCropSVG(
       }`;
   const path = document.createElementNS(svgns, 'path');
   path.classList.add('cls-1');
-  const d = getCropPathDefinition({ svgDimensions, cropDimensions });
+  const d = getCropPathDefinition({ viewBox, cropDimensions });
   path.setAttribute('d', d);
   svg.append(defs);
   defs.append(style);
@@ -44,7 +45,7 @@ export default function createCropSVG(
   return svg;
 }
 
-function getCropPathDefinition({ svgDimensions, cropDimensions }) {
+function getCropPathDefinition({ viewBox, cropDimensions }) {
   // you may need to dynamically set the padding-bottom of video container to the svg aspect ratio. It's set in the css right now.
   // you will also need to make sure crop is changed for the timeline frames.
   /**
@@ -74,23 +75,23 @@ function getCropPathDefinition({ svgDimensions, cropDimensions }) {
   const cropAspect = cropDimensions.height / cropDimensions.width;
   if (cropDimensions.height > cropDimensions.width) {
     // portrait, find width
-    ratio = svgDimensions.height / cropDimensions.height;
-    croppedHeight = svgDimensions.height;
+    ratio = viewBox.height / cropDimensions.height;
+    croppedHeight = viewBox.height;
     croppedWidth = croppedHeight / cropAspect;
   } else {
     // landscape, find height
-    ratio = svgDimensions.width / cropDimensions.width;
-    croppedWidth = svgDimensions.width;
+    ratio = viewBox.width / cropDimensions.width;
+    croppedWidth = viewBox.width;
     croppedHeight = croppedWidth * cropAspect;
   }
   // get literal crop height/width from svg dimensions
   console.log('crop literal dimensions', croppedWidth, croppedHeight);
-  const x = ((svgDimensions.width - croppedWidth) / 2).toFixed(2);
+  const x = ((viewBox.width - croppedWidth) / 2).toFixed(2);
   const leftX = x;
   const rightX = parseInt(leftX) + parseInt(croppedWidth);
-  const y = ((svgDimensions.height - croppedHeight) / 2).toFixed(2);
+  const y = ((viewBox.height - croppedHeight) / 2).toFixed(2);
   const bottomY = y;
   const topY = parseInt(bottomY) + parseInt(croppedHeight);
-  const pathDefinition = `M0,0H640V480H0V0ZM${leftX},${bottomY}H${rightX}V${topY}H${leftX}V1Z`;
+  const pathDefinition = `M0,0H${viewBox.width}V${viewBox.height}H0V0ZM${leftX},${bottomY}H${rightX}V${topY}H${leftX}V1Z`;
   return pathDefinition;
 }
