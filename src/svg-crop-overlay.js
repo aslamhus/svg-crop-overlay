@@ -95,43 +95,16 @@ function getCropPathDefinition({ viewBox, cropDimensions }) {
 
   let anchor;
 
-  const viewBoxAspectType = getAspectType(viewBox);
+  // const viewBoxAspectType = getAspectType(viewBox);
   const cropAspectType = getAspectType(cropDimensions);
-  console.log(`crop is ${cropAspectType}`);
-  console.log(`viewBox is ${viewBoxAspectType}`);
+  const cropAspect = cropDimensions.width / cropDimensions.height;
+  const viewBoxAspect = viewBox.width / viewBox.height;
   switch (cropAspectType) {
     case 'portrait':
-      switch (viewBoxAspectType) {
-        case 'square':
-        case 'landscape':
-          anchor = 'height';
-          break;
-        case 'portrait':
-          anchor = 'width';
-          break;
-      }
-      break;
-    case 'landscape':
-      switch (viewBoxAspectType) {
-        case 'landscape':
-          anchor = 'height';
-          break;
-        case 'square':
-        case 'portrait':
-          anchor = 'width';
-          break;
-      }
-      break;
+      anchor = cropAspect < viewBoxAspect ? 'width' : 'height';
     case 'square':
-      switch (viewBoxAspectType) {
-        case 'square':
-        case 'portrait':
-          anchor = 'width';
-          break;
-        case 'landscape':
-          anchor = 'height';
-          break;
-      }
+    case 'landscape':
+      anchor = cropAspect > viewBoxAspect ? 'width' : 'height';
       break;
   }
   const [croppedWidth, croppedHeight] = getRectLiteralDimensionsFromAspect({

@@ -1,18 +1,18 @@
 /******/ // The require scope
-/******/ var e = {
+/******/ var t = {
     /******/ // define getter functions for harmony exports
-    /******/ d: (t, i) => {
-      /******/ /******/ for (var r in i)
-        e.o(i, r) &&
-          !e.o(t, r) &&
-          /******/ Object.defineProperty(t, r, { enumerable: !0, get: i[r] });
+    /******/ d: (e, i) => {
+      /******/ /******/ for (var h in i)
+        t.o(i, h) &&
+          !t.o(e, h) &&
+          /******/ Object.defineProperty(e, h, { enumerable: !0, get: i[h] });
         /******/
       /******/
     },
-    /******/ o: (e, t) => Object.prototype.hasOwnProperty.call(e, t),
+    /******/ o: (t, e) => Object.prototype.hasOwnProperty.call(t, e),
     /******/
   },
-  t = {};
+  e = {};
 /******/
 /************************************************************************/
 /******/ /* webpack/runtime/define property getters */
@@ -28,34 +28,34 @@
  * @property {Number} viewBox.height
  * @returns
  */
-function createCropSVG(e = { width: 3, height: 2 }, t = { width: 640, height: 480 }) {
+function createCropSVG(t = { width: 3, height: 2 }, e = { width: 640, height: 480 }) {
   const i = 'xMidYMid slice',
-    r = 'xMidYMid slice';
-  let s;
-  switch (getAspectType(e)) {
+    h = 'xMidYMid slice';
+  let r;
+  switch (getAspectType(t)) {
     case 'portrait':
       // console.info('crop is portrait');
-      s = r;
+      r = h;
       break;
     case 'landscape':
     case 'square':
       // console.log('crop is square');
-      s = i;
+      r = i;
   }
   // console.log('preserveAspectRatio', preserveAspectRatio);
-  const c = 'http://www.w3.org/2000/svg',
-    a = document.createElementNS(c, 'svg');
-  a.setAttribute('width', '100%'),
-    a.setAttribute('height', '100%'),
-    a.setAttribute('viewBox', `0 0 ${t.width} ${t.height}`),
-    a.setAttribute('preserveAspectRatio', s);
-  const n = document.createElementNS(c, 'defs'),
-    h = document.createElementNS(c, 'style');
-  h.textContent =
+  const n = 'http://www.w3.org/2000/svg',
+    c = document.createElementNS(n, 'svg');
+  c.setAttribute('width', '100%'),
+    c.setAttribute('height', '100%'),
+    c.setAttribute('viewBox', `0 0 ${e.width} ${e.height}`),
+    c.setAttribute('preserveAspectRatio', r);
+  const s = document.createElementNS(n, 'defs'),
+    o = document.createElementNS(n, 'style');
+  o.textContent =
     '\n      .cls-1 {\n          fill: #0c0c0c;\n          fill-rule: evenodd;\n          opacity: 1;\n      }';
-  const o = document.createElementNS(c, 'path');
-  o.classList.add('cls-1');
-  const p = (function getCropPathDefinition({ viewBox: e, cropDimensions: t }) {
+  const a = document.createElementNS(n, 'path');
+  a.classList.add('cls-1');
+  const d = (function getCropPathDefinition({ viewBox: t, cropDimensions: e }) {
     // you may need to dynamically set the padding-bottom of video container to the svg aspect ratio. It's set in the css right now.
     // you will also need to make sure crop is changed for the timeline frames.
     /**
@@ -81,75 +81,54 @@ function createCropSVG(e = { width: 3, height: 2 }, t = { width: 640, height: 48
      * cropWidth =
      */
     let i;
-    const r = getAspectType(e);
-    switch (getAspectType(t)) {
+    // const viewBoxAspectType = getAspectType(viewBox);
+    const h = getAspectType(e),
+      r = e.width / e.height,
+      n = t.width / t.height;
+    switch (h) {
       case 'portrait':
-        switch (r) {
-          case 'square':
-          case 'landscape':
-            i = 'height';
-            break;
-          case 'portrait':
-            i = 'width';
-        }
-        break;
-      case 'landscape':
-        switch (r) {
-          case 'landscape':
-            i = 'height';
-            break;
-          case 'square':
-          case 'portrait':
-            i = 'width';
-        }
-        break;
+        i = r < n ? 'width' : 'height';
       case 'square':
-        switch (r) {
-          case 'square':
-          case 'portrait':
-            i = 'width';
-            break;
-          case 'landscape':
-            i = 'height';
-        }
+      case 'landscape':
+        i = r > n ? 'width' : 'height';
     }
-    const [s, c] = (function getRectLiteralDimensionsFromAspect({
-      aspect: e = { width: s, height: r },
-      rect: t = { width: s, height: r },
+    const [c, s] = (function getRectLiteralDimensionsFromAspect({
+      aspect: t = { width: r, height: h },
+      rect: e = { width: r, height: h },
       anchor: i,
     }) {
-      let r, s, c;
-      const a = e.height / e.width;
+      let h, r, n;
+      const c = t.height / t.width;
       if ('height' == i)
         // find width
-        (c = t.height / e.height), (r = t.height), (s = r / a);
+        (n = e.height / t.height), (h = e.height), (r = h / c);
       else {
         if ('width' != i)
           throw new TypeError(
             'unexpected anchor value. Must be either width or height but found: ' + i
           );
         // find height
-        (c = t.width / e.width), (s = t.width), (r = s * a);
+        (n = e.width / t.width), (r = e.width), (h = r * c);
       }
-      return [s, r];
-    })({ aspect: t, rect: e, anchor: i });
-    const a = ((e.width - s) / 2).toFixed(2),
-      n = a,
-      h = parseInt(n) + parseInt(s);
-    const o = ((e.height - c) / 2).toFixed(2),
-      p = o,
-      d = parseInt(p) + parseInt(c),
-      w = `M0,0H${e.width}V${e.height}H0V0ZM${n},${p}H${h}V${d}H${n}V1Z`;
-    return w;
-  })({ viewBox: t, cropDimensions: e });
-  return o.setAttribute('d', p), a.append(n), n.append(h), a.append(o), a;
+      return [r, h];
+    })({ aspect: e, rect: t, anchor: i });
+    const o = ((t.width - c) / 2).toFixed(2),
+      a = o,
+      d = parseInt(a) + parseInt(c);
+    const p = ((t.height - s) / 2).toFixed(2),
+      w = p,
+      g = parseInt(w) + parseInt(s),
+      l = `M0,0H${t.width}V${t.height}H0V0ZM${a},${w}H${d}V${g}H${a}V1Z`;
+    return l;
+  })({ viewBox: e, cropDimensions: t });
+  return a.setAttribute('d', d), c.append(s), s.append(o), c.append(a), c;
 }
-function getAspectType({ width: e, height: t }) {
-  return e > t ? 'landscape' : e < t ? 'portrait' : 'square';
+function getAspectType({ width: t, height: e }) {
+  return t > e ? 'landscape' : t < e ? 'portrait' : 'square';
 }
-/* harmony export */ e.d(t, {
+/* harmony export */ t.d(e, {
   /* harmony export */ k: () => /* binding */ createCropSVG,
   /* harmony export */
 });
-var i = t.k;
+var i = e.k;
 export { i as createCropSVG };
