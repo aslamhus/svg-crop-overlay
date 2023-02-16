@@ -14,13 +14,24 @@ export function createCropSVG(
   viewBox = { width: 640, height: 480 }
 ) {
   console.log('viewBox', viewBox);
-  const aspectPreserve = { landscape: 'xMinYMid slice', portrait: 'xMidYMid slice' };
-  let preserveAspectRatio = aspectPreserve.landscape;
-  if (cropDimensions.height > cropDimensions.width) {
-    console.log('crop is portrait');
-    preserveAspectRatio = aspectPreserve.portrait;
+  console.log('crop', cropDimensions);
+  const aspectPreserve = { landscape: 'xMidYMid slice', portrait: 'xMidYMid slice' };
+  let preserveAspectRatio;
+  switch (getAspectType(cropDimensions)) {
+    case 'portrait':
+      // console.info('crop is portrait');
+      preserveAspectRatio = aspectPreserve.portrait;
+      break;
+    case 'landscape':
+      // console.info('crop is landscape');
+      preserveAspectRatio = aspectPreserve.landscape;
+      break;
+    case 'square':
+      // console.log('crop is square');
+      break;
   }
-  console.log('preserveAspectRatio', preserveAspectRatio);
+
+  // console.log('preserveAspectRatio', preserveAspectRatio);
   const svgns = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(svgns, 'svg');
   svg.setAttribute('width', '100%');
@@ -33,7 +44,7 @@ export function createCropSVG(
       .cls-1 {
           fill: #0c0c0c;
           fill-rule: evenodd;
-          opacity: 0.9;
+          opacity: 1;
       }`;
   const path = document.createElementNS(svgns, 'path');
   path.classList.add('cls-1');
@@ -43,6 +54,15 @@ export function createCropSVG(
   defs.append(style);
   svg.append(path);
   return svg;
+}
+function getAspectType({ width, height }) {
+  if (width > height) {
+    return 'landscape';
+  } else if (width < height) {
+    return 'portrait';
+  } else {
+    return 'square';
+  }
 }
 
 function getCropPathDefinition({ viewBox, cropDimensions }) {
@@ -71,27 +91,89 @@ function getCropPathDefinition({ viewBox, cropDimensions }) {
    * cropWidth =
    */
 
-  let ratio, croppedWidth, croppedHeight;
-  const cropAspect = cropDimensions.height / cropDimensions.width;
-  if (cropDimensions.height > cropDimensions.width) {
-    // portrait, find width
-    ratio = viewBox.height / cropDimensions.height;
-    croppedHeight = viewBox.height;
-    croppedWidth = croppedHeight / cropAspect;
-  } else {
-    // landscape, find height
-    ratio = viewBox.width / cropDimensions.width;
-    croppedWidth = viewBox.width;
-    croppedHeight = croppedWidth * cropAspect;
+  let anchor;
+
+  const viewBoxAspectType = getAspectType(viewBox);
+  const cropAspectType = getAspectType(cropDimensions);
+  console.log(`crop is ${cropAspectType}`);
+  console.log(`viewBox is ${viewBoxAspectType}`);
+  switch (cropAspectType) {
+    case 'portrait':
+      switch (viewBoxAspectType) {
+        case 'square':
+        case 'landscape':
+          anchor = 'height';
+          break;
+        case 'portrait':
+          anchor = 'width';
+          break;
+      }
+      break;
+    case 'landscape':
+      switch (viewBoxAspectType) {
+        case 'landscape':
+          anchor = 'height';
+          break;
+        case 'square':
+        case 'portrait':
+          anchor = 'width';
+          break;
+      }
+      break;
+    case 'square':
+      switch (viewBoxAspectType) {
+        case 'square':
+        case 'portrait':
+          anchor = 'width';
+          break;
+        case 'landscape':
+          anchor = 'height';
+          break;
+      }
+      break;
   }
+  const [croppedWidth, croppedHeight] = getRectLiteralDimensionsFromAspect({
+    aspect: cropDimensions,
+    rect: viewBox,
+    anchor,
+  });
+  console.log('anchor', anchor);
   // get literal crop height/width from svg dimensions
   console.log('crop literal dimensions', croppedWidth, croppedHeight);
   const x = ((viewBox.width - croppedWidth) / 2).toFixed(2);
   const leftX = x;
   const rightX = parseInt(leftX) + parseInt(croppedWidth);
+  console.log('x', leftX, rightX);
   const y = ((viewBox.height - croppedHeight) / 2).toFixed(2);
   const bottomY = y;
   const topY = parseInt(bottomY) + parseInt(croppedHeight);
   const pathDefinition = `M0,0H${viewBox.width}V${viewBox.height}H0V0ZM${leftX},${bottomY}H${rightX}V${topY}H${leftX}V1Z`;
   return pathDefinition;
+}
+
+function getRectLiteralDimensionsFromAspect({
+  aspect = { width, height },
+  rect = { width, height },
+  anchor,
+}) {
+  let height, width, ratio;
+  console.log('aspect', aspect);
+  console.log('rect', rect);
+  const aspectRatio = aspect.height / aspect.width;
+  if (anchor == 'height') {
+    // find width
+    ratio = rect.height / aspect.height;
+    height = rect.height;
+    width = height / aspectRatio;
+  } else if (anchor == 'width') {
+    // find height
+    ratio = rect.width / aspect.width;
+    width = rect.width;
+    height = width * aspectRatio;
+  } else {
+    throw new TypeError(
+      'unexpected anchor value. Must be either width or height but found: ' + anchor
+    );
+  }
+  return [width, height];
 }
