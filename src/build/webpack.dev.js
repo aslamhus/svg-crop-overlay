@@ -7,7 +7,7 @@ import { __dirname } from './webpack.common.js';
 export default merge(common, {
   mode: 'development',
   entry: './test/index.js',
-  devtool: 'source-map',
+  devtool: 'eval-cheap-module-source-map',
   plugins: [
     new HTMLWebpackPlugin({
       filename: 'index.html',

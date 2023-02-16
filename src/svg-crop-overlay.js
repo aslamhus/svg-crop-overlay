@@ -28,6 +28,8 @@ export function createCropSVG(
       break;
     case 'square':
       // console.log('crop is square');
+
+      preserveAspectRatio = aspectPreserve.landscape;
       break;
   }
 
